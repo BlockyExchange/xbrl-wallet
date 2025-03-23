@@ -304,7 +304,7 @@ export class SweeperComponent implements OnInit {
         // input hash is the opening address public key
         workInputHash = this.pubKey;
       }
-      const work = await this.workPool.getWork(workInputHash, 1 / 64); // receive threshold
+      const work = await this.workPool.getWork(workInputHash, 1 ); // receive threshold
       // create the block with the work found
       const block = nanocurrency.createBlock(this.privKey, {balance: this.adjustedBalance, representative: this.representative,
       work: work, link: key, previous: this.previous});
@@ -379,8 +379,8 @@ export class SweeperComponent implements OnInit {
         raw = this.util.big.add(raw, data.blocks[key].amount);
       }.bind(this));
       const nanoAmount = this.util.nano.rawToMnano(raw);
-      const pending = {count: Object.keys(data.blocks).length, raw: raw, XNO: nanoAmount, blocks: data.blocks};
-      const row = 'Found ' + pending.count + ' pending containing total ' + pending.XNO + ' XNO';
+      const pending = {count: Object.keys(data.blocks).length, raw: raw, XBRL: nanoAmount, blocks: data.blocks};
+      const row = 'Found ' + pending.count + ' pending containing total ' + pending.XBRL + ' XBRL';
       this.appendLog(row);
 
       // create receive blocks for all pending

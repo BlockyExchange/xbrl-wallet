@@ -1,7 +1,7 @@
 import TransportNodeHid from '@ledgerhq/hw-transport-node-hid';
 import TransportNodeBle from '@ledgerhq/hw-transport-node-ble';
 import Transport from '@ledgerhq/hw-transport';
-import Nano from 'hw-app-nano';
+import Nano from 'hw-app-nan';
 
 import * as rx from 'rxjs';
 
@@ -69,7 +69,7 @@ export class LedgerService {
           if (sub) sub.unsubscribe();
           clearTimeout(timeoutId);
           this.ledger.transport = await transport.open(e.descriptor);
-          this.ledger.nano = new Nano(this.ledger.transport);
+          this.ledger.nano = new Nano(this.ledger.transport, ['xbrl_', 'brl_']);
           resolve(this.ledger.transport);
         },
         error: (e) => {

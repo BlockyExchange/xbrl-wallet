@@ -13,7 +13,6 @@ import {AppSettingsService} from './app-settings.service';
 import {PriceService} from './price.service';
 import {LedgerService} from './ledger.service';
 import { NoPaddingZerosPipe } from 'app/pipes/no-padding-zeros.pipe';
-
 export type WalletType = 'seed' | 'ledger' | 'privateKey' | 'expandedKey';
 
 export interface WalletAccount {
@@ -93,7 +92,7 @@ export interface WalletApiAccount extends BaseApiAccount {
 
 @Injectable()
 export class WalletService {
-  nano = 1000000000000000000000000;
+  nano =  10000000000000000;
   storeKey = `nanovault-wallet`;
 
   wallet: FullWallet = {
@@ -214,17 +213,17 @@ export class WalletService {
           if (transaction.block.subtype === 'send') {
             // Incoming transaction
             if (this.addressBook.getTransactionTrackingById(addressLink)) {
-              this.notifications.sendInfo(`Tracked address ${accountHrefLink} can now receive ${trackedAmount} XNO`, { length: 10000 });
+              this.notifications.sendInfo(`Tracked address ${accountHrefLink} can now receive ${trackedAmount} XBRL`, { length: 10000 });
               console.log(`Tracked incoming block to: ${address} - Ӿ${trackedAmount}`);
             }
             // Outgoing transaction
             if (this.addressBook.getTransactionTrackingById(address)) {
-              this.notifications.sendInfo(`Tracked address ${accountHref} sent ${trackedAmount} XNO`, { length: 10000 });
+              this.notifications.sendInfo(`Tracked address ${accountHref} sent ${trackedAmount} XBRL`, { length: 10000 });
               console.log(`Tracked send block from: ${address} - Ӿ${trackedAmount}`);
             }
           } else if (transaction.block.subtype === 'receive' && this.addressBook.getTransactionTrackingById(address)) {
             // Receive transaction
-            this.notifications.sendInfo(`Tracked address ${accountHref} received incoming ${trackedAmount} XNO`, { length: 10000 });
+            this.notifications.sendInfo(`Tracked address ${accountHref} received incoming ${trackedAmount} XBRL`, { length: 10000 });
             console.log(`Tracked receive block to: ${address} - Ӿ${trackedAmount}`);
           } else if (transaction.block.subtype === 'change' && this.addressBook.getTransactionTrackingById(address)) {
             // Change transaction
@@ -318,7 +317,10 @@ export class WalletService {
     if (walletJson.accounts) {
       const newAccounts = walletJson.accounts.map(account => {
         if (account.id.indexOf('xrb_') !== -1) {
-          account.id = account.id.replace('xrb_', 'nano_');
+          account.id = account.id.replace('brl_', 'xbrl_').replace('nano_', 'xbrl_');;
+        }
+        else if (account.id.indexOf('brl_') !== -1) {
+          account.id = account.id.replace('brl_', 'xbrl_').replace('nano_', 'xbrl_');;
         }
         return account;
       });
@@ -421,7 +423,7 @@ export class WalletService {
     const exportData = this.generateExportData();
     const base64Data = btoa(JSON.stringify(exportData));
 
-    return `https://nault.cc/import-wallet#${base64Data}`;
+    return `https://wallet.xbrl.blocky.com.br/import-wallet#${base64Data}`;
   }
 
   lockWallet() {
@@ -515,7 +517,7 @@ export class WalletService {
 
         } else if (this.wallet.type === 'ledger') {
           const account: any = await this.ledgerService.getLedgerAccount(index);
-          accountAddress = account.address.replace('xrb_', 'nano_');
+          accountAddress = account.address.replace('brl_', 'xbrl_');
           accountPublicKey = account.publicKey.toUpperCase();
 
         } else {
@@ -597,7 +599,7 @@ export class WalletService {
     const account: any = await this.ledgerService.getLedgerAccount(index);
 
     const accountID = account.address;
-    const nanoAccountID = accountID.replace('xrb_', 'nano_');
+    const nanoAccountID = accountID.replace('brl_', 'xbrl_');
     const addressBookName = this.addressBook.getAccountName(nanoAccountID);
 
     const newAccount: WalletAccount = {
@@ -847,7 +849,7 @@ export class WalletService {
               // a send or change block is made it's safer to use 1x PoW threshold to be sure the cache will work.
               // On the other hand, it may be more efficient to use 1/64 and simply let the work cache rework
               // in case a send is made instead. The typical user scenario would be to let the wallet auto receive first
-              this.workPool.addWorkToCache(hash, 1 / 64);
+              this.workPool.addWorkToCache(hash, 1 );
               walletAccount.receivePow = true;
             } else {
               walletAccount.receivePow = false;
@@ -953,6 +955,7 @@ export class WalletService {
 
     }
 
+    newAccount.id = newAccount.id.replace('nano_', 'xbrl_')
     this.wallet.accounts.push(newAccount);
 
     if (reloadBalances) await this.reloadBalances();
@@ -1054,7 +1057,7 @@ export class WalletService {
 
       const receiveAmount = this.util.nano.rawToMnano(nextBlock.amount);
       this.notifications.removeNotification('success-receive');
-      this.notifications.sendSuccess(`Successfully received ${receiveAmount.isZero() ? '' : this.noZerosPipe.transform(receiveAmount.toFixed(6)) } XNO!`, { identifier: 'success-receive' });
+      this.notifications.sendSuccess(`Successfully received ${receiveAmount.isZero() ? '' : this.noZerosPipe.transform(receiveAmount.toFixed(6)) } XBRL!`, { identifier: 'success-receive' });
 
       // remove after processing
       // list also updated with reloadBalances but not if called too fast

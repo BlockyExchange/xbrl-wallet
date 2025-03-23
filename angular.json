@@ -32,7 +32,7 @@
               "@zxing/library",
               "bignumber.js",
               "nanocurrency",
-              "hw-app-nano",
+              "hw-app-nan",
               "crypto-js",
               "blakejs",
               "nanocurrency-web",

@@ -369,7 +369,7 @@ export class SignComponent implements OnInit {
     switch (this.signTypeSelected) {
       // wallet
       case this.signTypes[0]:
-        this.walletAccount = this.accounts.find(a => a.id.replace('xrb_', 'nano_') === this.signatureAccount);
+        this.walletAccount = this.accounts.find(a => a.id.replace('brl_', 'xbrl_') === this.signatureAccount);
         if (!this.walletAccount) {
           this.signatureMessage = 'Could not find a matching wallet account to sign with. Make sure it\'s added under your accounts';
         } else {
@@ -436,9 +436,9 @@ export class SignComponent implements OnInit {
     }
 
     if (this.txType === TxType.send || this.txType === TxType.change) {
-      this.signatureAccount = this.fromAccountID.replace('xrb_', 'nano_').toLowerCase();
+      this.signatureAccount = this.fromAccountID.replace('brl_', 'xbrl_').toLowerCase();
     } else if (this.txType === TxType.receive || this.txType === TxType.open) {
-      this.signatureAccount = this.toAccountID.replace('xrb_', 'nano_').toLowerCase();
+      this.signatureAccount = this.toAccountID.replace('brl_', 'xbrl_').toLowerCase();
     }
 
     if (this.shouldSign) {
@@ -570,7 +570,7 @@ export class SignComponent implements OnInit {
       }
 
       if (this.txType === TxType.receive || this.txType === TxType.open) {
-        this.currentBlock.work = await this.workPool.getWork(workBlock, 1 / 64);
+        this.currentBlock.work = await this.workPool.getWork(workBlock, 1);
       } else {
         this.currentBlock.work = await this.workPool.getWork(workBlock, 1);
       }

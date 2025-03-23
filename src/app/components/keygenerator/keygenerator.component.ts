@@ -32,7 +32,7 @@ export class KeygeneratorComponent implements OnInit {
     const keyBytes = this.util.account.generateAccountSecretKeyBytes(seedBytes, 0);
     const keyPair = this.util.account.generateAccountKeyPair(keyBytes);
     this.privateKey = this.util.hex.fromUint8(keyPair.secretKey).toUpperCase();
-    this.account = this.util.account.getPublicAccountID(keyPair.publicKey);
+    this.account = this.util.account.getPublicAccountID(keyPair.publicKey).replace('nano_', 'xbrl_');
 
     // Split the seed up so we can show 4 per line
     const words = this.mnemonic.split(' ');

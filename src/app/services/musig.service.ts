@@ -140,8 +140,8 @@ export class MusigService {
     const pubkeys = [];
     for (let address of addresses) {
       address = address.trim();
-      if (!address.startsWith('xrb_') && !address.startsWith('nano_')) {
-        throw new Error('Nano addresses must start with xrb_ or nano_');
+      if (!address.startsWith('brl_') && !address.startsWith('xbrl_')) {
+        throw new Error('XBRL addresses must start with brl_ or xbrl_');
       }
       address = address.split('_', 2)[1];
       try {
@@ -188,7 +188,7 @@ export class MusigService {
     for (let i = 0; i < 5; i++) {
       fullAddress[32 + i] = checksum[i];
     }
-    const fullAddressFinal = 'nano_' + base32.encode(fullAddress);
+    const fullAddressFinal = 'xbrl_' + base32.encode(fullAddress);
     console.log('Multisig Account: ' + fullAddressFinal);
     this.wasm.musig_free(outPtr);
     return {'multisig': fullAddressFinal, 'pubkey': aggPubkey};

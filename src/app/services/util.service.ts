@@ -303,7 +303,7 @@ function getPublicAccountID(accountPublicKeyBytes, prefix = 'nano') {
 }
 
 function isValidAccount(account: string): boolean {
-  return nanocurrency.checkAddress(account);
+  return nanocurrency.checkAddress(account.replace('xbrl_', 'nano_'));
 }
 
 // Check if a string is a numeric and larger than 0 but less than nano supply
@@ -344,20 +344,20 @@ function getAccountPublicKey(account) {
   return uint4ToHex(key_uint4);
 }
 
-function setPrefix(account, prefix = 'xrb') {
-  if (prefix === 'nano') {
-    return account.replace('xrb_', 'nano_');
+function setPrefix(account, prefix = 'brl') {
+  if (prefix === 'xblr') {
+    return account.replace('brl_', 'xbrl_');
   } else {
-    return account.replace('nano_', 'xrb_');
+    return account.replace('xbrl_', 'brl_');
   }
 }
 
 /**
  * Conversion functions
  */
-const mnano = 1000000000000000000000000000000;
-const knano = 1000000000000000000000000000;
-const nano  = 1000000000000000000000000;
+const mnano = 10000000000000000;
+const knano = 10000000000000000;
+const nano  = 10000000000000000;
 function mnanoToRaw(value) {
   return new BigNumber(value).times(mnano);
 }

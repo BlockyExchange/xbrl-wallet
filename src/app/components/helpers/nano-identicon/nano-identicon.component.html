@@ -7,3 +7,6 @@
 		<img src="assets/img/natricon-placeholder.svg">
 	</div>
 </ng-container>
+<ng-container *ngIf="(settingIdenticonsStyle === 'blockycon')">
+	<img [src]="('https://blockycon.blocky.com.br/' + accountID)" style="border-radius: 0.5rem;">
+</ng-container>

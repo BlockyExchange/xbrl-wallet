@@ -28,7 +28,7 @@ export interface BalanceAccount {
 
 export class AddressBookComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  nano = 1000000000000000000000000;
+  nano = 10000000000000000;
   activePanel = 0;
   creatingNewEntry = false;
 
@@ -286,7 +286,7 @@ export class AddressBookComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     // Remove spaces and convert to nano prefix
-    this.newAddressAccount = this.newAddressAccount.replace(/ /g, '').replace('xrb_', 'nano_');
+    this.newAddressAccount = this.newAddressAccount.replace(/ /g, '').replace('nano_', 'xbrl_');
 
     // If the name has been changed, make sure no other entries are using that name
     if ( (this.newAddressName !== this.previousAddressName) && this.addressBookService.nameExists(this.newAddressName) ) {
@@ -377,7 +377,7 @@ export class AddressBookComponent implements OnInit, AfterViewInit, OnDestroy {
   async exportAddressBook() {
     const exportData = this.addressBookService.addressBook;
     const base64Data = btoa(this.toBinary(JSON.stringify(exportData)));
-    const exportUrl = `https://nault.cc/import-address-book#${base64Data}`;
+    const exportUrl = `https://wallet.xbrl.blocky.com.br/import-address-book#${base64Data}`;
     this.addressBookQRExportUrl = exportUrl;
     this.addressBookShowFileExport = true;
 
@@ -388,7 +388,7 @@ export class AddressBookComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   exportAddressBookToFile() {
-    const fileName = `Nault-AddressBook.json`;
+    const fileName = `Bault-AddressBook.json`;
 
     const exportData = this.addressBookService.addressBook;
     this.triggerFileDownload(fileName, exportData);

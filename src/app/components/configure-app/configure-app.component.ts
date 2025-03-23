@@ -47,7 +47,7 @@ export class ConfigureAppComponent implements OnInit {
   selectedLanguage = this.languages[0].id;
 
   denominations = [
-    { name: 'XNO', value: 'mnano' },
+    { name: 'XBRL', value: 'mnano' },
     { name: 'knano', value: 'knano' },
     { name: 'nano', value: 'nano' },
   ];
@@ -94,6 +94,8 @@ export class ConfigureAppComponent implements OnInit {
     { name: 'TRY - Turkish Lira', value: 'TRY' },
     { name: 'TWD - New Taiwan Dollar', value: 'TWD' },
     { name: 'ZAR - South African Rand', value: 'ZAR' },
+    { name: 'XAU - Gold Troy Ounce', value: 'XAU' },
+    { name: 'XAG - Silver Troy Ounce', value: 'XAG' },
   ];
   selectedCurrency = this.currencies[0].value;
 
@@ -104,9 +106,10 @@ export class ConfigureAppComponent implements OnInit {
   selectedNightModeOption = this.nightModeOptions[0].value;
 
   identiconOptions = [
-    { name: this.translocoService.translate('configure-app.identicon-options.none'), value: 'none' },
-    { name: this.translocoService.translate('configure-app.identicon-options.nanoidenticons-by-keerifox'), value: 'nanoidenticons' },
-    { name: this.translocoService.translate('configure-app.identicon-options.natricon-by-appditto'), value: 'natricon' },
+    { name: 'Blockycon', value: 'blockycon' }
+    //{ name: this.translocoService.translate('configure-app.identicon-options.none'), value: 'none' },
+    //{ name: this.translocoService.translate('configure-app.identicon-options.nanoidenticons-by-keerifox'), value: 'nanoidenticons' },
+    //{ name: this.translocoService.translate('configure-app.identicon-options.natricon-by-appditto'), value: 'natricon' },
   ];
   selectedIdenticonOption = this.identiconOptions[0].value;
 
@@ -626,7 +629,7 @@ export class ConfigureAppComponent implements OnInit {
 
       this.notifications.sendSuccess(this.translocoService.translate('configure-app.clear-all-data.successfully-deleted-locally-stored-data-and-reset-the'));
 
-      // Get a new random API server or Nault will get stuck in offline mode
+      // Get a new random API server or Bault will get stuck in offline mode
       this.updateServerSettings();
     } catch (err) {}
   }

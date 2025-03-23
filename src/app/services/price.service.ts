@@ -19,13 +19,21 @@ export class PriceService {
 
   async getPrice(currency = 'USD') {
     if (!currency) return; // No currency defined, do not refetch
-    const response: any = await this.http.get(`${this.apiUrl}`).toPromise();
+    const response: any = await this.http.get(`https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/brl.json`).toPromise();
     if (!response) {
       return this.price.lastPrice;
     }
 
-    const quote = response.market_data.current_price;
-    const currencyPrice = quote[currency.toLowerCase()];
+    const quote = response['brl'][currency.toLowerCase()]
+    this.price.lastPrice = quote;
+    this.savePrice();
+    this.lastPrice$.next(quote);
+    return quote
+    //const quote = (parseFloat(response[`BRL${currency.toUpperCase()}`]["bid"]) + parseFloat(response[`BRL${currency.toUpperCase()}`]["ask"])) / 2.0;
+    //console.log(`${currency} - ${quote}`);
+    //console.log(response);
+    //return quote;
+    /* const currencyPrice = quote[currency.toLowerCase()];
     const btcPrice = quote.btc;
 
     this.price.lastPrice = currencyPrice;
@@ -35,7 +43,7 @@ export class PriceService {
 
     this.lastPrice$.next(currencyPrice);
 
-    return this.price.lastPrice;
+    return this.price.lastPrice; */
   }
 
   loadSavedPrice() {

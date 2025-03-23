@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import Nano from 'hw-app-nano';
+import Nano from 'hw-app-nan';
 import TransportU2F from '@ledgerhq/hw-transport-u2f';
 import TransportUSB from '@ledgerhq/hw-transport-webusb';
 import TransportHID from '@ledgerhq/hw-transport-webhid';
@@ -265,7 +265,7 @@ export class LedgerService {
 
         // LedgerLogs.listen((log: LedgerLog) => console.log(`Ledger: ${log.type}: ${log.message}`));
         this.ledger.transport = trans;
-        this.ledger.nano = new Nano(this.ledger.transport);
+        this.ledger.nano = new Nano(this.ledger.transport, ['brl_', 'xbrl_']);
 
         resolve(this.ledger.transport);
       }).catch(reject);

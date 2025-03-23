@@ -54,10 +54,10 @@ export class AppSettingsService {
     serverAPI: null,
     serverWS: null,
     serverAuth: null,
-    minimumReceive: '0.000001',
+    minimumReceive: '0.0000000000000001',
     walletVersion: 1,
     lightModeEnabled: false,
-    identiconsStyle: 'nanoidenticons',
+    identiconsStyle: 'blockycon',
   };
 
   serverOptions = [
@@ -70,36 +70,12 @@ export class AppSettingsService {
       shouldRandom: false,
     },
     {
-      name: 'Rainstorm City',
-      value: 'rainstorm',
-      api: 'https://rainstorm.city/api',
-      ws: 'wss://rainstorm.city/websocket',
+      name: 'Blocky Official Node',
+      value: 'blocky',
+      api: 'https://rpc.xbrl.blocky.com.br',
+      ws: 'wss://ws.xbrl.blocky.com.br',
       auth: null,
       shouldRandom: true,
-    },
-    {
-      name: 'NanOslo',
-      value: 'nanoslo',
-      api: 'https://nanoslo.0x.no/proxy',
-      ws: 'wss://nanoslo.0x.no/websocket',
-      auth: null,
-      shouldRandom: true,
-    },
-    {
-      name: 'SomeNano',
-      value: 'somenano',
-      api: 'https://node.somenano.com/proxy',
-      ws: 'wss://node.somenano.com/websocket',
-      auth: null,
-      shouldRandom: true,
-    },
-    {
-      name: 'SpyNano (New Node - Use with caution)',
-      value: 'spynano',
-      api: 'https://node.spynano.org/proxy',
-      ws: 'wss://node.spynano.org/websocket',
-      auth: null,
-      shouldRandom: false,
     },
     {
       name: 'Custom',
@@ -231,10 +207,10 @@ export class AppSettingsService {
       serverAPI: null,
       serverWS: null,
       serverAuth: null,
-      minimumReceive: '0.000001',
+      minimumReceive: '0.0000000000000001',
       walletVersion: 1,
       lightModeEnabled: false,
-      identiconsStyle: 'nanoidenticons',
+      identiconsStyle: 'blockycon',
     };
   }
 

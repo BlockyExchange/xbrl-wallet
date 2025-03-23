@@ -14,23 +14,13 @@ const nacl = window['nacl'];
 @Injectable()
 export class NanoBlockService {
   representativeAccounts = [
-    'nano_1x7biz69cem95oo7gxkrw6kzhfywq4x5dupw4z1bdzkb74dk9kpxwzjbdhhs', // NanoCrawler
-    'nano_1zuksmn4e8tjw1ch8m8fbrwy5459bx8645o9euj699rs13qy6ysjhrewioey', // Nanowallets.guide
-    'nano_3chartsi6ja8ay1qq9xg3xegqnbg1qx76nouw6jedyb8wx3r4wu94rxap7hg', // Nano Charts
-    'nano_1iuz18n4g4wfp9gf7p1s8qkygxw7wx9qfjq6a9aq68uyrdnningdcjontgar', // NanoTicker / Ricki
-    'nano_3msc38fyn67pgio16dj586pdrceahtn75qgnx7fy19wscixrc8dbb3abhbw6', // gr0vity
-    'nano_3patrick68y5btibaujyu7zokw7ctu4onikarddphra6qt688xzrszcg4yuo', // Patrick
-    'nano_1tk8h3yzkibbsti8upkfa69wqafz6mzfzgu8bu5edaay9k7hidqdunpr4tb6', // rsnano
-    'nano_3ekb6tp8ixtkibimyygepgkwckzhds9basxd5zfue4efjnxaan77gsnanick', // Nanick
-    'nano_1xckpezrhg56nuokqh6t1stjca67h37jmrp9qnejjkfgimx1msm9ehuaieuq', // Flying Amigos
-    'nano_3n7ky76t4g57o9skjawm8pprooz1bminkbeegsyt694xn6d31c6s744fjzzz', // Humble Nano
-    'nano_1wenanoqm7xbypou7x3nue1isaeddamjdnc3z99tekjbfezdbq8fmb659o7t', // WeNano
+    'xbrl_3b1ockyxxqnxqw11gh9bu5g6u3m1cik3qfg84jn9pz4o19x94mj7a87fpej6', // Blocky Official PR
   ];
 
   zeroHash = '0000000000000000000000000000000000000000000000000000000000000000';
 
   // https://docs.nano.org/releases/network-upgrades/#epoch-blocks
-  epochV2SignerAccount = 'nano_3qb6o6i1tkzr6jwr5s7eehfxwg9x6eemitdinbpi7u8bjjwsgqfj4wzser3x';
+  epochV2SignerAccount = 'xbrl_3qb6o6i1tkzr6jwr5s7eehfxwg9x6eemitdinbpi7u8bjjwsgqfj4wzser3x';
 
   newOpenBlock$: BehaviorSubject<boolean|false> = new BehaviorSubject(false);
 
@@ -317,7 +307,7 @@ export class NanoBlockService {
     }
 
     console.log('Get work for receive block');
-    blockData.work = await this.workPool.getWork(workBlock, 1 / 64); // low PoW threshold since receive block
+    blockData.work = await this.workPool.getWork(workBlock, 1 ); // low PoW threshold since receive block
     this.notifications.removeNotification('pow');
     const processResponse = await this.api.process(blockData, openEquiv ? TxType.open : TxType.receive);
     if (processResponse && processResponse.hash) {
@@ -404,70 +394,29 @@ export class NanoBlockService {
     return block; // return signed block (with or without work)
   }
 
-  async validateAccount(accountInfoUntrusted, accountPublicKey) {
-    if (!accountInfoUntrusted) return;
-
-    if (!accountInfoUntrusted.frontier || accountInfoUntrusted.frontier === this.zeroHash) {
-      if (accountInfoUntrusted.balance && accountInfoUntrusted.balance !== '0') {
+  async validateAccount(accountInfo, walletAccountPublicKey) {
+    if (!accountInfo) return;
+    if (!accountInfo.frontier || accountInfo.frontier === this.zeroHash) {
+      if (accountInfo.balance && accountInfo.balance !== '0') {
         throw new Error(`Frontier not set, but existing account balance is nonzero`);
       }
-
-      if (accountInfoUntrusted.representative) {
+      if (accountInfo.representative) {
         throw new Error(`Frontier not set, but existing account representative is set`);
       }
-
       return;
     }
-
-    const frontierBlockResponseUntrusted =
-      await this.api.blocksInfo([ accountInfoUntrusted.frontier ]);
-
-    const frontierBlockDataUntrusted =
-      frontierBlockResponseUntrusted.blocks[accountInfoUntrusted.frontier];
-
-    if (!frontierBlockDataUntrusted) throw new Error(`Unable to load frontier block data`);
-
-    frontierBlockDataUntrusted.contents = JSON.parse(frontierBlockDataUntrusted.contents);
-
-    const isFrontierBlockMatchingAccountInfo = (
-        (frontierBlockDataUntrusted.contents.balance === accountInfoUntrusted.balance)
-      && (frontierBlockDataUntrusted.contents.representative === accountInfoUntrusted.representative)
-    );
-
-    if (isFrontierBlockMatchingAccountInfo !== true) {
+    const blockResponse = await this.api.blocksInfo([accountInfo.frontier]);
+    const blockData = blockResponse.blocks[accountInfo.frontier];
+    if (!blockData) throw new Error(`Unable to load block data`);
+    blockData.contents = JSON.parse(blockData.contents);
+    if (accountInfo.balance !== blockData.contents.balance || accountInfo.representative !== blockData.contents.representative) {
       throw new Error(`Frontier block data doesn't match account info`);
     }
-
-    if (frontierBlockDataUntrusted.contents.type !== 'state') {
+    if (blockData.contents.type !== 'state') {
       throw new Error(`Frontier block wasn't a state block, which shouldn't be possible`);
     }
-
-    const isComputedBlockHashMatchingAccountFrontierHash = (
-        this.util.hex.fromUint8( this.util.nano.hashStateBlock(frontierBlockDataUntrusted.contents) )
-      === accountInfoUntrusted.frontier
-    );
-
-    if (isComputedBlockHashMatchingAccountFrontierHash !== true) {
+    if (this.util.hex.fromUint8(this.util.nano.hashStateBlock(blockData.contents)) !== accountInfo.frontier) {
       throw new Error(`Frontier hash didn't match block data`);
-    }
-
-    if (frontierBlockDataUntrusted.subtype === 'epoch') {
-      const isEpochV2BlockSignatureValid =
-        nanocurrencyWebTools.verifyBlock(
-          this.util.account.getAccountPublicKey(this.epochV2SignerAccount),
-          frontierBlockDataUntrusted.contents
-        );
-
-      if (isEpochV2BlockSignatureValid !== true) {
-        throw new Error(`Node provided an untrusted frontier block that is an unsupported epoch`);
-      }
-    } else {
-      const isFrontierBlockSignatureValid =
-        nanocurrencyWebTools.verifyBlock(accountPublicKey, frontierBlockDataUntrusted.contents);
-
-      if (isFrontierBlockSignatureValid !== true) {
-        throw new Error(`Node provided an untrusted frontier block that was signed by someone else`);
-      }
     }
   }
 
