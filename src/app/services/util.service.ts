@@ -345,7 +345,7 @@ function getAccountPublicKey(account) {
 }
 
 function setPrefix(account, prefix = 'brl') {
-  if (prefix === 'xblr') {
+  if (prefix === 'xbrl') {
     return account.replace('brl_', 'xbrl_');
   } else {
     return account.replace('xbrl_', 'brl_');
