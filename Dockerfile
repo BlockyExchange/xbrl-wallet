@@ -18,6 +18,6 @@ ARG ENV=prod
 RUN npm run wallet:build
 
 # build the nginx hosting container
-FROM docker.ionginx:1.21-alpine
+FROM docker.io/nginx:1.21-alpine
 COPY .docker/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /usr/src/app/dist /usr/share/nginx/html
