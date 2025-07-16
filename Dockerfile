@@ -1,5 +1,5 @@
 # build the angular app
-FROM node:12-buster AS build
+FROM docker.io/node:12-buster AS build
 WORKDIR /usr/src
 
 # Update sources.list and install necessary packages, including git and jq
@@ -18,6 +18,6 @@ ARG ENV=prod
 RUN npm run wallet:build
 
 # build the nginx hosting container
-FROM nginx:1.21-alpine
+FROM docker.ionginx:1.21-alpine
 COPY .docker/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /usr/src/app/dist /usr/share/nginx/html
